@@ -1,0 +1,28 @@
+{
+  "name": "facerec",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start-react": "npm start --prefix front",
+    "start-electron": "wait-on http://localhost:3000 && electron index.js",
+    "start": "concurrently \"npm run start-react\" \"npm run start-electron\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "child_process": "^1.0.2",
+    "electron": "^33.2.1",
+    "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
+    "path": "^0.12.7",
+    "pg": "^8.13.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.1"
+  }
+}
