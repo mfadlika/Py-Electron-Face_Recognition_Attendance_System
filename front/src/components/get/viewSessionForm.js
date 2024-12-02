@@ -8,6 +8,32 @@ function ViewSessionForm() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState([]);
   const [modalTitle, setModalTitle] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [sessId, setSessId] = useState([]);
+
+  const handleDownloadCSV = async () => {
+    try {
+      setIsDownloading(true);
+
+      // Trigger the backend to create and download CSV
+      const filePath = await window.electron.getClassSessionsCSV(sessId);
+
+      // Create a temporary anchor element to trigger the file download
+      const a = document.createElement("a");
+      a.href = `file://${filePath}`; // Ensure file:// path works
+      a.download = "class_sessions.csv"; // Specify the file name
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      setIsDownloading(false);
+      alert("CSV downloaded successfully");
+    } catch (error) {
+      setIsDownloading(false);
+      console.error("Error downloading CSV:", error);
+      alert("Failed to download CSV");
+    }
+  };
 
   // Fetching the classes when the component mounts
   useEffect(() => {
@@ -42,9 +68,14 @@ function ViewSessionForm() {
   // Fetch students for a specific session and show in modal
   const handleAttendanceClick = async (sessionId) => {
     try {
+      setSessId(sessionId);
       const students = await window.electron.getSessionAttendance(sessionId);
       setModalContent(students);
-      setModalTitle(`Students for Session ${classSessions.find((session) => session.id === sessionId).class_id}`);
+      setModalTitle(
+        `Students for Session ${
+          classSessions.find((session) => session.id === sessionId).class_id
+        }`
+      );
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching session attendance:", error);
@@ -124,6 +155,13 @@ function ViewSessionForm() {
               ))}
             </tbody>
           </table>
+          <button
+            onClick={handleDownloadCSV}
+            disabled={isDownloading}
+            className="justify-center w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+          >
+            Download CSV
+          </button>
         </Modal>
       )}
     </div>

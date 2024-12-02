@@ -112,6 +112,28 @@ function getSessionAttendance(sessionId) {
   });
 }
 
+const getClassSessionsCSV = (classSessionId) => {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT 
+        students.name,
+        presences.student_id,
+        presences.status
+      FROM 
+        presences
+      LEFT JOIN 
+        students 
+      ON 
+        presences.student_id = students.id
+      WHERE 
+        presences.class_session_id = ?`;
+    db.all(query, [classSessionId], (err, rows) => {
+      if (err) reject(err);
+      console.log(rows);
+      resolve(rows);
+    });
+  });
+};
+
 module.exports = {
   getClasses,
   getStudents,
@@ -120,4 +142,5 @@ module.exports = {
   getClassSessions,
   getSchedulesByClass,
   getSessionAttendance,
+  getClassSessionsCSV,
 };

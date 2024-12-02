@@ -46,4 +46,6 @@ contextBridge.exposeInMainWorld("electron", {
   updateStudentImages: () => ipcRenderer.invoke("updateStudentImages"),
   uploadStudentImages: (folderPath) =>
     ipcRenderer.invoke("uploadStudentImages", folderPath),
+  getClassSessionsCSV: (classSessionId) =>
+    ipcRenderer.invoke("getClassSessionsCSV", classSessionId),
 });

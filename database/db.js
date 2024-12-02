@@ -12,6 +12,7 @@ const {
   getSchedulesByClass,
   getClassSessions,
   getSessionAttendance,
+  getClassSessionsCSV,
 } = require("./getFunctions");
 const {
   addClass,
@@ -102,6 +103,8 @@ module.exports = {
   getSchedulesByClass,
   getClassSessions,
   getSessionAttendance,
+  getClassSessionsCSV,
+
   addClass,
   addStudent,
   addStudentClass,

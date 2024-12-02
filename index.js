@@ -15,13 +15,14 @@ const {
   getClassSessions,
   getSessionAttendance,
   updateStudentImages,
-  uploadStudentImages,
+  getClassSessionsCSV,
 } = require("./database/db");
 const fs = require("fs");
 const { execFile } = require("child_process");
 const bcrypt = require("bcrypt");
 const passwordFile = path.resolve(__dirname, "pw.json");
-const { dialog } = require("electron");
+const { parse } = require("json2csv");
+const os = require("os"); // Required to access the user's home directory
 
 let mainWindow;
 
@@ -404,6 +405,21 @@ ipcMain.handle("uploadStudentImages", (event, folderFiles) => {
       });
     });
   });
+});
+
+ipcMain.handle("getClassSessionsCSV", async (event, classSessionId) => {
+  try {
+    const rows = await getClassSessionsCSV(classSessionId);
+
+    const csv = parse(rows);
+    const downloadsFolder = path.join(os.homedir(), "Downloads");
+    const filePath = path.join(downloadsFolder, "class_sessions_presence.csv"); // Save the file as 'class_sessions.csv' in Downloads folder
+    fs.writeFileSync(filePath, csv);
+    return filePath;
+  } catch (error) {
+    console.error("Error generating CSV:", error);
+    throw error;
+  }
 });
 
 app.on("window-all-closed", () => {
