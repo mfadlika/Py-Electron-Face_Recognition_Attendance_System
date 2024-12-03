@@ -28,7 +28,7 @@ function LiveFaceRecognition() {
       if (isRecognizing && !recognitionResult) {
         captureImage();
       }
-    }, 3000); // 3 seconds interval
+    }, 1800); // n miliseconds interval
 
     // Cleanup interval and webcam on component unmount
     return () => {

@@ -5,11 +5,11 @@ const db = new sqlite3.Database("./database/attendance.db");
 
 // Function to add a class
 function addClass(classData, callback) {
-  const { class_name, year } = classData;
-  const id = `${class_name} (${year})`; // Concatenate class_name and year to form the id
+  const { classId, year, name, lecturer_id } = classData;
 
-  const query = "INSERT INTO classes (id, year) VALUES (?, ?)";
-  db.run(query, [id, year], function (err) {
+  const query =
+    "INSERT INTO classes (id, year, name, lecturer_id) VALUES (?, ?, ?, ?)";
+  db.run(query, [classId, year, name, lecturer_id], function (err) {
     if (err) {
       callback(err);
     } else {
@@ -168,24 +168,60 @@ function updatePresence(studentId) {
           VALUES (?, ?, 'Present');
         `;
 
-        db.run(insertPresenceQuery, [classSessionId, id], function (err) {
+          db.run(insertPresenceQuery, [classSessionId, id], function (err) {
+            if (err) {
+              console.error("Error inserting presence:", err);
+              reject("Failed to record presence.");
+            } else {
+              const addCountQuery = `UPDATE class_sessions SET attendance_count = attendance_count + 1 WHERE id = ?`;
+              db.run(addCountQuery, [classSessionId], function (err) {
+                if (err) {
+                  console.error("Error updating presence count:", err);
+                }
+                resolve("Presence recorded successfully.");
+              });
+            }
+          });
+        });
+      });
+    });
+  });
+}
+
+function updateStudentImages() {
+  const imageDir = path.join(__dirname, "/images"); // Path to the images folder
+
+  // Read all files in the images folder
+  fs.readdir(imageDir, (err, files) => {
+    if (err) {
+      console.error("Error reading image directory:", err);
+      return;
+    }
+
+    files.forEach((file) => {
+      const filePath = path.join(imageDir, file);
+
+      // Skip directories, process only files
+      if (fs.statSync(filePath).isFile()) {
+        // Assuming file name format is "student_id - name.jpg"
+        const fileName = path.basename(file, path.extname(file)); // Get the file name without extension
+        const [student_id, ...nameParts] = fileName.split(" - ");
+        const name = nameParts.join(" "); // Join name parts in case the name has spaces
+
+        // Generate the file path you want to store in the database
+        const imagePath = `database/images/${file}`;
+
+        // Update the student record with the image path
+        const query = `INSERT OR IGNORE INTO students (image, id, name) VALUES (?, ?, ?)`;
+
+        db.run(query, [imagePath, student_id, name], function (err) {
           if (err) {
-            console.error("Error inserting presence:", err);
-            reject("Failed to record presence.");
+            // console.error("Error updating student record:", err);
           } else {
-            const addCountQuery = `UPDATE class_sessions SET presence_count = presence_count + 1 WHERE id = ?`;
-            db.run(addCountQuery, [classSessionId], function (err) {
-              if (err) {
-                console.error("Error updating presence count:", err);
-              }
-              resolve("Presence recorded successfully.");
-            });
+            // console.log(`Updated student ${name} with image path ${imagePath}`);
           }
         });
-        });
-
-        
-      });
+      }
     });
   });
 }
@@ -197,4 +233,5 @@ module.exports = {
   addSchedule,
   addClassSession,
   updatePresence,
+  updateStudentImages
 };

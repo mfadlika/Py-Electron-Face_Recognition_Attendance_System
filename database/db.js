@@ -4,32 +4,20 @@ const path = require("path");
 // Path to the SQLite database file
 const dbPath = path.join(__dirname, "attendance.db");
 
-const {
-  getClasses,
-  getStudents,
-  getStudentsByClass,
-  getSchedules,
-  getSchedulesByClass,
-  getClassSessions,
-  getSessionAttendance,
-  getClassSessionsCSV,
-} = require("./getFunctions");
-const {
-  addClass,
-  addStudent,
-  addStudentClass,
-  addSchedule,
-  addClassSession,
-  updatePresence,
-} = require("./postFunctions");
-
-const { updateStudentImages } = require("./imageFunctions");
-
 // Open SQLite database
 const db = new sqlite3.Database(dbPath);
 
 // Create tables if they don't exist
 db.serialize(() => {
+  db.run(`
+     CREATE TABLE IF NOT EXISTS lecturers (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      image TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    `);
+
   db.run(`
     CREATE TABLE IF NOT EXISTS students (
       id TEXT PRIMARY KEY,
@@ -42,7 +30,10 @@ db.serialize(() => {
   db.run(`
     CREATE TABLE IF NOT EXISTS classes (
       id TEXT PRIMARY KEY,
-      year TEXT NOT NULL
+      name TEXT NOT NULL,
+      year TEXT NOT NULL,
+      lecturer_id TEXT,
+      FOREIGN KEY(lecturer_id) REFERENCES lecturers(id)
     )
   `);
 
@@ -94,22 +85,3 @@ db.serialize(() => {
     )
   `);
 });
-
-module.exports = {
-  getClasses,
-  getStudents,
-  getStudentsByClass,
-  getSchedules,
-  getSchedulesByClass,
-  getClassSessions,
-  getSessionAttendance,
-  getClassSessionsCSV,
-
-  addClass,
-  addStudent,
-  addStudentClass,
-  addSchedule,
-  addClassSession,
-  updatePresence,
-  updateStudentImages,
-};

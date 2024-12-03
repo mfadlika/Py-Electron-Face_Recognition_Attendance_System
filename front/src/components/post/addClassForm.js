@@ -4,6 +4,8 @@ function AddClassForm() {
   const [className, setClassName] = useState("");
   const [year, setYear] = useState(""); // Store year in format: 'year/semester'
   const [semester, setSemester] = useState("1"); // Semester state (1 or 2) with default value of 1
+  const [classId, setClassId] = useState("");
+  const [lecturer, setLecturer] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAddClass = async () => {
@@ -19,7 +21,12 @@ function AddClassForm() {
     setLoading(true);
 
     try {
-      const newClass = { class_name: className, year: formattedYear }; // Include formatted year
+      const newClass = {
+        class_id: classId,
+        year: formattedYear,
+        name: className,
+        lecturer: lecturer,
+      }; // Include formatted year
       await window.electron.addClass(newClass); // Ensure this function exists in Electron
       alert("Class added successfully!");
       setClassName(""); // Clear the input field
@@ -40,9 +47,25 @@ function AddClassForm() {
       {/* Input for Class Name */}
       <input
         type="text"
+        value={classId}
+        onChange={(e) => setClassId(e.target.value)}
+        placeholder="ID Kelas"
+        className="border border-gray-300 w-full p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <input
+        type="text"
         value={className}
         onChange={(e) => setClassName(e.target.value)}
         placeholder="Nama Kelas"
+        className="border border-gray-300 w-full p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+
+      <input
+        type="text"
+        value={lecturer}
+        onChange={(e) => setLecturer(e.target.value)}
+        placeholder="Nama Dosen"
         className="border border-gray-300 w-full p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
