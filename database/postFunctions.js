@@ -1,7 +1,4 @@
-const { Query } = require("pg");
-
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./database/attendance.db");
+const db = require("./db");
 
 // Function to add a class
 function addClass(classData, callback) {
@@ -233,5 +230,5 @@ module.exports = {
   addSchedule,
   addClassSession,
   updatePresence,
-  updateStudentImages
+  updateStudentImages,
 };

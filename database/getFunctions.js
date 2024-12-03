@@ -1,5 +1,4 @@
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./database/attendance.db");
+const db = require("./db");
 
 // Function to get all classes
 function getClasses(callback) {
