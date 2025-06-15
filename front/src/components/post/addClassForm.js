@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function AddClassForm() {
   const [className, setClassName] = useState("");
   const [year, setYear] = useState(""); // Store year in format: 'year/semester'
   const [semester, setSemester] = useState("1"); // Semester state (1 or 2) with default value of 1
   const [classId, setClassId] = useState("");
-  const [lecturer, setLecturer] = useState("");
+  const [lecturerId, setLecturerId] = useState("");
+  const [lecturers, setLecturers] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAddClass = async () => {
@@ -22,11 +23,11 @@ function AddClassForm() {
 
     try {
       const newClass = {
-        class_id: classId,
+        classId: classId,
         year: formattedYear,
         name: className,
-        lecturer: lecturer,
-      }; // Include formatted year
+        lecturer_id: lecturerId,
+      };
       await window.electron.addClass(newClass); // Ensure this function exists in Electron
       alert("Class added successfully!");
       setClassName(""); // Clear the input field
@@ -39,6 +40,21 @@ function AddClassForm() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchLecturers = async () => {
+      try {
+        console.log("Fetching classes..."); // Debugging log
+        const data = await window.electron.getLecturers(); // Fetch existing classes
+        console.log("Lecturers fetched:", data); // Debugging log
+        setLecturers(data);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+      }
+    };
+
+    fetchLecturers();
+  }, []);
 
   return (
     <div className="p-6 max-w-sm mx-auto">
@@ -61,13 +77,22 @@ function AddClassForm() {
         className="border border-gray-300 w-full p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
-      <input
-        type="text"
-        value={lecturer}
-        onChange={(e) => setLecturer(e.target.value)}
-        placeholder="Nama Dosen"
+      <select
+        value={lecturerId}
+        onChange={(e) => setLecturerId(e.target.value)}
         className="border border-gray-300 w-full p-3 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      >
+        <option value="">Pilih Dosen</option>
+        {lecturers.length > 0 ? (
+          lecturers.map((lecturer) => (
+            <option key={lecturer.id} value={lecturer.id}>
+              {lecturer.name}
+            </option>
+          ))
+        ) : (
+          <option value="">No lecturers available</option>
+        )}
+      </select>
 
       {/* Container for Year and Semester input side by side */}
       <div className="flex space-x-4 mb-4">

@@ -51,7 +51,7 @@ function AddStudentForm() {
       return;
     }
 
-    const imagePath = await window.electron.saveStudentImage(
+    const imagePath = await window.electron.saveImage(
       image,
       `${studentId} - ${name}`
     );
@@ -68,7 +68,7 @@ function AddStudentForm() {
 
     try {
       // Send the file objects to the backend (main process)
-      const result = await window.electron.uploadStudentImages(folderFiles);
+      await window.electron.uploadStudentImages(folderFiles);
 
       alert("Folder uploaded successfully!");
     } catch (error) {
@@ -103,15 +103,16 @@ function AddStudentForm() {
     }
 
     // Now save the student to the database, using the image path
-    const studentData = {
-      name,
-      student_id: studentId,
+    const personData = {
+      type: "student",
+      name: name,
+      id: studentId,
       image: imagePath, // Use the file path here
     };
 
-    // Call the addStudent function to insert into the database
+    // Call the addPerson function to insert into the database
     try {
-      await window.electron.addStudent(studentData);
+      await window.electron.addPerson(personData);
       alert("Student added successfully!");
     } catch (error) {
       console.error("Error adding student:", error);

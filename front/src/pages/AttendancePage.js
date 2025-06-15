@@ -69,7 +69,7 @@ function LiveFaceRecognition() {
       );
 
       if (result === "Unknown") {
-        setShowModal(false);
+        setShowModal(true);
       } else {
         setRecognizedName(result); // Set the recognized name
         setRecognitionResult(result); // Store the recognition result

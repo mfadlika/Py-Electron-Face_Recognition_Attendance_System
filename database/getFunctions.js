@@ -1,4 +1,4 @@
-const db = require("./db");
+const { db } = require("./db");
 
 // Function to get all classes
 function getClasses(callback) {
@@ -15,6 +15,17 @@ function getClasses(callback) {
 // Function to get all students
 function getStudents(callback) {
   const query = "SELECT * FROM students";
+  db.all(query, (err, rows) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, rows);
+    }
+  });
+}
+
+function getLecturers(callback) {
+  const query = "SELECT * FROM lecturers";
   db.all(query, (err, rows) => {
     if (err) {
       callback(err);
@@ -136,6 +147,7 @@ const getClassSessionsCSV = (classSessionId) => {
 module.exports = {
   getClasses,
   getStudents,
+  getLecturers,
   getStudentsByClass,
   getSchedules,
   getClassSessions,

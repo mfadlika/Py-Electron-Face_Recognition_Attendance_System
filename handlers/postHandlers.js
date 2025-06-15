@@ -1,6 +1,6 @@
 const {
   addClass,
-  addStudent,
+  addPerson,
   addStudentClass,
   addSchedule,
   addClassSession,
@@ -10,7 +10,7 @@ const {
 
 const fs = require("fs");
 const { execFile } = require("child_process");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const path = require("path");
 const passwordFile = path.resolve(__dirname, "..", "pw.json");
 
@@ -112,7 +112,7 @@ module.exports = {
       }
     });
 
-    ipcMain.handle("saveStudentImage", (event, imageData, name) => {
+    ipcMain.handle("saveImage", (event, imageData, name) => {
       // Match the image format from the base64 data
       const imageTypeMatch = imageData.match(
         /^data:image\/(png|jpeg|jpg);base64,/
@@ -176,9 +176,9 @@ module.exports = {
       });
     });
 
-    ipcMain.handle("addStudent", async (event, studentData) => {
+    ipcMain.handle("addPerson", async (event, personData) => {
       return new Promise((resolve, reject) => {
-        addStudent(studentData, (err, newStudent) => {
+        addPerson(personData, (err, newStudent) => {
           if (err) reject(err);
           else resolve(newStudent);
         });
@@ -288,10 +288,8 @@ module.exports = {
           });
 
           if (fileExists) {
-            console.error(
-              `Error: File with name ${fileBaseName} (excluding extension) already exists in the folder.`
-            );
-            return reject(new Error(`File ${fileBaseName} already exists`)); // Prevent saving and reject the promise
+            console.log(`Skipping file ${fileBaseName} as it already exists.`);
+            return; // Just skip this file and continue the loop
           }
 
           // Write the image file to the disk

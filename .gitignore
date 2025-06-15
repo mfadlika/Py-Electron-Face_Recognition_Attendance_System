@@ -5,6 +5,8 @@
 /front/node_modules
 /database/images/*
 !/database/images/.gitignore
+/database/encoding/*
+!/database/encoding/.gitignore
 /database/attendance.db
 /.pnp
 .pnp.js

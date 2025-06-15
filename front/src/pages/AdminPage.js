@@ -6,6 +6,7 @@ import AddStudentForm from "../components/post/addStudentForm";
 import AddSessionForm from "../components/post/addSessionForm";
 import AddScheduleForm from "../components/post/addScheduleForm";
 import AddStudentClassForm from "../components/post/addStudentClassForm";
+import AddLecturerForm from "../components/post/addLecturerForm";
 
 function AdminPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +31,12 @@ function AdminPage() {
       <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <button
+          onClick={() => openModal(<AddLecturerForm />)}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          Tambah Dosen
+        </button>
+        <button
           onClick={() => openModal(<AddClassForm />)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
@@ -42,10 +49,10 @@ function AdminPage() {
           Tambah Mahasiswa
         </button>
         <button
-          onClick={() => openModal(<AddSessionForm />)}
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700"
+          onClick={() => openModal(<AddStudentClassForm />)}
+          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-700"
         >
-          Tambah Sesi Kelas
+          Tambah Mahasiswa ke Kelas
         </button>
         <button
           onClick={() => openModal(<AddScheduleForm />)}
@@ -54,10 +61,10 @@ function AdminPage() {
           Tambah Jadwal Kelas
         </button>
         <button
-          onClick={() => openModal(<AddStudentClassForm />)}
-          className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          onClick={() => openModal(<AddSessionForm />)}
+          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-700"
         >
-          Tambah Mahasiswa ke Kelas
+          Tambah Sesi Kelas
         </button>
       </div>
 

@@ -1,9 +1,13 @@
-const db = require("./db");
+const { exec } = require("child_process");
+const { db } = require("./db");
+const fs = require("fs");
+const path = require("path");
 
 // Function to add a class
 function addClass(classData, callback) {
   const { classId, year, name, lecturer_id } = classData;
 
+  console.log(classId);
   const query =
     "INSERT INTO classes (id, year, name, lecturer_id) VALUES (?, ?, ?, ?)";
   db.run(query, [classId, year, name, lecturer_id], function (err) {
@@ -11,20 +15,26 @@ function addClass(classData, callback) {
       callback(err);
     } else {
       console.log("Executed query: ", query);
-      callback(null, { id, year });
+      callback(null, { classId, year, name, lecturer_id });
     }
   });
 }
 
 // Function to add a student
-function addStudent(studentData, callback) {
-  const { name, student_id, image } = studentData;
-  const query = "INSERT INTO students (id, name, image) VALUES (?, ?, ?)";
-  db.run(query, [student_id, name, image], function (err) {
+function addPerson(personData, callback) {
+  const { type, name, id, image } = personData;
+  let query;
+  if (type === "student") {
+    query = "INSERT INTO students (id, name, image) VALUES (?, ?, ?)";
+  } else if (type === "lecturer") {
+    query = "INSERT INTO lecturers (id, name, image) VALUES (?, ?, ?)";
+  }
+
+  db.run(query, [id, name, image], function (err) {
     if (err) {
       callback(err);
     } else {
-      callback(null, { id: this.lastID, name, student_id, image });
+      callback(null, { id: this.lastID, name, id, image });
     }
   });
 }
@@ -106,6 +116,8 @@ function updatePresence(studentId) {
       SELECT id, class_id, created_at
       FROM class_sessions where created_at < datetime('now') 
       AND datetime(created_at, '+2 hours') > datetime('now')
+      ORDER BY created_at DESC
+      LIMIT 1
     `;
 
     db.get(findClassSessionQuery, (err, classSession) => {
@@ -213,19 +225,28 @@ function updateStudentImages() {
 
         db.run(query, [imagePath, student_id, name], function (err) {
           if (err) {
-            // console.error("Error updating student record:", err);
+            console.error("Error updating student record:", err);
           } else {
-            // console.log(`Updated student ${name} with image path ${imagePath}`);
+            console.log(`Updated student ${name} with image path ${imagePath}`);
           }
         });
       }
     });
   });
+  // Run the Python script after the database update
+  const pythonScriptPath = path.join(__dirname, "..", "script", "to_encode.py"); // Replace with your script path
+  exec(`python3 ${pythonScriptPath}`, (err, stdout, stderr) => {
+    if (err) {
+      console.error(`Error executing Python script: ${stderr}`);
+      return;
+    }
+    console.log(`Python script output: ${stdout}`);
+  });
 }
 
 module.exports = {
   addClass,
-  addStudent,
+  addPerson,
   addStudentClass,
   addSchedule,
   addClassSession,

@@ -26,9 +26,11 @@ function ViewStudentForm() {
         <table className="min-w-full table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2 border">Student ID</th>
-              <th className="px-4 py-2 border">Name</th>
-              <th className="px-4 py-2 border">Image</th>
+              <th className="sticky top-0 bg-white px-4 py-2 border">
+                Student ID
+              </th>
+              <th className="sticky top-0 bg-white px-4 py-2 border">Name</th>
+              <th className="sticky top-0 bg-white px-4 py-2 border">Image</th>
             </tr>
           </thead>
           <tbody>

@@ -1,6 +1,7 @@
 const {
   getClasses,
   getStudents,
+  getLecturers,
   getStudentsByClass,
   getSchedules,
   getSchedulesByClass,
@@ -9,6 +10,8 @@ const {
   getClassSessionsCSV,
 } = require("../database/getFunctions");
 const { parse } = require("json2csv");
+const path = require("path");
+const fs = require("fs");
 const os = require("os"); // Required to access the user's home directory
 
 module.exports = {
@@ -31,6 +34,15 @@ module.exports = {
         getStudents((err, students) => {
           if (err) reject(err);
           else resolve(students);
+        });
+      });
+    });
+
+    ipcMain.handle("getLecturers", async (event) => {
+      return new Promise((resolve, reject) => {
+        getLecturers((err, lecturers) => {
+          if (err) reject(err);
+          else resolve(lecturers);
         });
       });
     });
@@ -84,11 +96,12 @@ module.exports = {
         const rows = await getClassSessionsCSV(classSessionId);
 
         const csv = parse(rows);
+        console.log(csv);
         const downloadsFolder = path.join(os.homedir(), "Downloads");
-        const filePath = path.join(
-          downloadsFolder,
-          "class_sessions_presence.csv"
-        ); // Save the file as 'class_sessions.csv' in Downloads folder
+        const fileName = `class_sessions_presence_${Date.now()}.csv`;
+        const filePath = path.join(downloadsFolder, fileName); // Save the file as 'class_sessions.csv' in Downloads folder
+
+        console.log(filePath);
         fs.writeFileSync(filePath, csv);
         return filePath;
       } catch (error) {

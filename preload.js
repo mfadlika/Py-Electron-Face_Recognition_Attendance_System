@@ -19,7 +19,7 @@ contextBridge.exposeInMainWorld("electron", {
     }
   },
   addClass: (classData) => ipcRenderer.invoke("addClass", classData),
-  addStudent: (studentData) => ipcRenderer.invoke("addStudent", studentData),
+  addPerson: (personData) => ipcRenderer.invoke("addPerson", personData),
   addStudentClass: (studentClassData) =>
     ipcRenderer.invoke("addStudentClass", studentClassData),
   addSchedule: (scheduleData) =>
@@ -28,16 +28,16 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.invoke("addClassSession", classSessionData),
   getClasses: () => ipcRenderer.invoke("getClasses"),
   getStudents: () => ipcRenderer.invoke("getStudents"),
-  getStudentsByClass: (studentData) =>
-    ipcRenderer.invoke("getStudentsByClass", studentData),
+  getLecturers: () => ipcRenderer.invoke("getLecturers"),
+  getStudentsByClass: (personData) =>
+    ipcRenderer.invoke("getStudentsByClass", personData),
   getSchedules: () => ipcRenderer.invoke("getSchedules"),
   getSchedulesByClass: (scheduleData) =>
     ipcRenderer.invoke("getSchedulesByClass", scheduleData),
   getClassSessions: () => ipcRenderer.invoke("getClassSessions"),
   getSessionAttendance: (sessionId) =>
     ipcRenderer.invoke("getSessionAttendance", sessionId),
-  saveStudentImage: (image, name) =>
-    ipcRenderer.invoke("saveStudentImage", image, name),
+  saveImage: (image, name) => ipcRenderer.invoke("saveImage", image, name),
   updatePresence: (student) => ipcRenderer.invoke("updatePresence", studentId),
   validateAdminPassword: (password) =>
     ipcRenderer.invoke("validateAdminPassword", password),
